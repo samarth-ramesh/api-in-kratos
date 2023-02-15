@@ -15,12 +15,13 @@ var ProviderSet = wire.NewSet(NewData, NewGreeterRepo)
 // Data .
 type Data struct {
 	// TODO wrapped database client
-	db *sql.DB
+	Db        *sql.DB
+	JwtSecret string
 }
 
 // NewData .
-func NewData(c *conf.Data, logger log.Logger) (*Data, func(), error) {
-	db, err := sql.Open(c.Database.Driver, c.Database.Source)
+func NewData(confData *conf.Data, confServer *conf.Server, logger log.Logger) (*Data, func(), error) {
+	db, err := sql.Open(confData.Database.Driver, confData.Database.Source)
 	if err != nil {
 		return nil, nil, err
 	}
@@ -29,6 +30,7 @@ func NewData(c *conf.Data, logger log.Logger) (*Data, func(), error) {
 	}
 
 	return &Data{
-		db: db,
+		Db:        db,
+		JwtSecret: confServer.RandomKey,
 	}, cleanup, nil
 }

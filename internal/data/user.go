@@ -23,7 +23,7 @@ func NewGreeterRepo(data *Data, logger log.Logger) biz.UserRepo {
 }
 
 func (r *greeterRepo) Save(ctx context.Context, g *biz.User) (*biz.User, error) {
-	ret, err := r.data.db.Exec("INSERT INTO user VALUES (?, ?)", g.Username, g.Password)
+	ret, err := r.data.Db.Exec("INSERT INTO user VALUES (?, ?)", g.Username, g.Password)
 	if err != nil {
 		return nil, err
 	}
@@ -44,7 +44,7 @@ func (r *greeterRepo) FindByID(context.Context, int64) (*biz.User, error) {
 }
 
 func (r *greeterRepo) ListByUserName(ctx context.Context, term string) (rv []*biz.User, err error) {
-	rows, err := r.data.db.QueryContext(ctx, "SELECT username, password, rowid FROM user WHERE username = ?", term)
+	rows, err := r.data.Db.QueryContext(ctx, "SELECT username, password, rowid FROM user WHERE username = ?", term)
 	if rows != nil {
 		defer rows.Close()
 	}
@@ -64,4 +64,8 @@ func (r *greeterRepo) ListByUserName(ctx context.Context, term string) (rv []*bi
 
 func (r *greeterRepo) ListAll(context.Context) ([]*biz.User, error) {
 	return nil, nil
+}
+
+func (r *greeterRepo) GetSigningKey() string {
+	return r.data.JwtSecret
 }

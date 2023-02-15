@@ -3,11 +3,13 @@ package biz
 import (
 	"context"
 	"fmt"
+	"time"
 
 	v1 "accountsapi/api/helloworld/v1"
 
 	"github.com/go-kratos/kratos/v2/errors"
 	"github.com/go-kratos/kratos/v2/log"
+	"github.com/golang-jwt/jwt/v4"
 	"golang.org/x/crypto/bcrypt"
 )
 
@@ -31,6 +33,7 @@ type UserRepo interface {
 	FindByID(context.Context, int64) (*User, error)
 	ListByUserName(context.Context, string) ([]*User, error)
 	ListAll(context.Context) ([]*User, error)
+	GetSigningKey() string
 }
 
 // UserUsecase is a User usecase.
@@ -54,8 +57,13 @@ func checkPasswordHash(password, hash string) bool {
 	return err == nil
 }
 
-func generateJWTGrant(userId string) string {
-	return ""
+func generateJWTGrant(userId, jwtSecret string) (string, error) {
+	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.RegisteredClaims{
+		IssuedAt:  jwt.NewNumericDate(time.Now()),
+		Subject:   userId,
+		NotBefore: jwt.NewNumericDate(time.Now()),
+	})
+	return token.SignedString([]byte(jwtSecret))
 }
 
 // CreateUser creates a User, and returns the new User.
@@ -87,5 +95,5 @@ func (uc *UserUsecase) SignIn(ctx context.Context, g *User) (string, error) {
 	if !isCorrectPassword {
 		return "", ErrUserNotFound
 	}
-	return generateJWTGrant(rows[0].UserId), nil
+	return generateJWTGrant(rows[0].UserId, uc.repo.GetSigningKey())
 }
