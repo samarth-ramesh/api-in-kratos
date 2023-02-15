@@ -26,13 +26,11 @@ service User {
   };
 }
 
-// The request message containing the user's name.
 message SignUpReq {
   string name = 1;
   string password = 2;
 }
 
-// The response message containing the greetings
 message SignUpReply {
   string userId = 1;
 }

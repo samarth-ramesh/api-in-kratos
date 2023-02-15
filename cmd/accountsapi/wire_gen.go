@@ -28,7 +28,7 @@ func wireApp(confServer *conf.Server, confData *conf.Data, logger log.Logger) (*
 	if err != nil {
 		return nil, nil, err
 	}
-	userRepo := data.NewGreeterRepo(dataData, logger)
+	userRepo := data.NewUserRepo(dataData, logger)
 	userUsecase := biz.NewUserUsecase(userRepo, logger)
 	greeterService := service.NewGreeterService(userUsecase)
 	grpcServer := server.NewGRPCServer(confServer, greeterService, logger)

@@ -9,20 +9,20 @@ import (
 	"github.com/go-kratos/kratos/v2/log"
 )
 
-type greeterRepo struct {
+type userRepo struct {
 	data *Data
 	log  *log.Helper
 }
 
-// NewGreeterRepo .
-func NewGreeterRepo(data *Data, logger log.Logger) biz.UserRepo {
-	return &greeterRepo{
+// NewUserRepo .
+func NewUserRepo(data *Data, logger log.Logger) biz.UserRepo {
+	return &userRepo{
 		data: data,
 		log:  log.NewHelper(logger),
 	}
 }
 
-func (r *greeterRepo) Save(ctx context.Context, g *biz.User) (*biz.User, error) {
+func (r *userRepo) Save(ctx context.Context, g *biz.User) (*biz.User, error) {
 	ret, err := r.data.Db.Exec("INSERT INTO user VALUES (?, ?)", g.Username, g.Password)
 	if err != nil {
 		return nil, err
@@ -35,15 +35,15 @@ func (r *greeterRepo) Save(ctx context.Context, g *biz.User) (*biz.User, error) 
 	return g, nil
 }
 
-func (r *greeterRepo) Update(ctx context.Context, g *biz.User) (*biz.User, error) {
+func (r *userRepo) Update(ctx context.Context, g *biz.User) (*biz.User, error) {
 	return g, nil
 }
 
-func (r *greeterRepo) FindByID(context.Context, int64) (*biz.User, error) {
+func (r *userRepo) FindByID(context.Context, int64) (*biz.User, error) {
 	return nil, nil
 }
 
-func (r *greeterRepo) ListByUserName(ctx context.Context, term string) (rv []*biz.User, err error) {
+func (r *userRepo) ListByUserName(ctx context.Context, term string) (rv []*biz.User, err error) {
 	rows, err := r.data.Db.QueryContext(ctx, "SELECT username, password, rowid FROM user WHERE username = ?", term)
 	if rows != nil {
 		defer rows.Close()
@@ -62,10 +62,10 @@ func (r *greeterRepo) ListByUserName(ctx context.Context, term string) (rv []*bi
 	return rv, nil
 }
 
-func (r *greeterRepo) ListAll(context.Context) ([]*biz.User, error) {
+func (r *userRepo) ListAll(context.Context) ([]*biz.User, error) {
 	return nil, nil
 }
 
-func (r *greeterRepo) GetSigningKey() string {
+func (r *userRepo) GetSigningKey() string {
 	return r.data.JwtSecret
 }
