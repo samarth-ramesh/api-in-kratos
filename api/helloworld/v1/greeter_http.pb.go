@@ -19,27 +19,27 @@ var _ = binding.EncodeURL
 
 const _ = http.SupportPackageIsVersion1
 
-const OperationGreeterLogIn = "/helloworld.v1.Greeter/LogIn"
-const OperationGreeterSignUp = "/helloworld.v1.Greeter/SignUp"
+const OperationUserLogIn = "/helloworld.v1.User/LogIn"
+const OperationUserSignUp = "/helloworld.v1.User/SignUp"
 
-type GreeterHTTPServer interface {
+type UserHTTPServer interface {
 	LogIn(context.Context, *LoginReq) (*LoginResp, error)
 	SignUp(context.Context, *SignUpReq) (*SignUpReply, error)
 }
 
-func RegisterGreeterHTTPServer(s *http.Server, srv GreeterHTTPServer) {
+func RegisterUserHTTPServer(s *http.Server, srv UserHTTPServer) {
 	r := s.Route("/")
-	r.POST("/signup", _Greeter_SignUp0_HTTP_Handler(srv))
-	r.POST("/login", _Greeter_LogIn0_HTTP_Handler(srv))
+	r.POST("/signup", _User_SignUp0_HTTP_Handler(srv))
+	r.POST("/login", _User_LogIn0_HTTP_Handler(srv))
 }
 
-func _Greeter_SignUp0_HTTP_Handler(srv GreeterHTTPServer) func(ctx http.Context) error {
+func _User_SignUp0_HTTP_Handler(srv UserHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in SignUpReq
 		if err := ctx.Bind(&in); err != nil {
 			return err
 		}
-		http.SetOperation(ctx, OperationGreeterSignUp)
+		http.SetOperation(ctx, OperationUserSignUp)
 		h := ctx.Middleware(func(ctx context.Context, req interface{}) (interface{}, error) {
 			return srv.SignUp(ctx, req.(*SignUpReq))
 		})
@@ -52,13 +52,13 @@ func _Greeter_SignUp0_HTTP_Handler(srv GreeterHTTPServer) func(ctx http.Context)
 	}
 }
 
-func _Greeter_LogIn0_HTTP_Handler(srv GreeterHTTPServer) func(ctx http.Context) error {
+func _User_LogIn0_HTTP_Handler(srv UserHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in LoginReq
 		if err := ctx.Bind(&in); err != nil {
 			return err
 		}
-		http.SetOperation(ctx, OperationGreeterLogIn)
+		http.SetOperation(ctx, OperationUserLogIn)
 		h := ctx.Middleware(func(ctx context.Context, req interface{}) (interface{}, error) {
 			return srv.LogIn(ctx, req.(*LoginReq))
 		})
@@ -71,24 +71,24 @@ func _Greeter_LogIn0_HTTP_Handler(srv GreeterHTTPServer) func(ctx http.Context) 
 	}
 }
 
-type GreeterHTTPClient interface {
+type UserHTTPClient interface {
 	LogIn(ctx context.Context, req *LoginReq, opts ...http.CallOption) (rsp *LoginResp, err error)
 	SignUp(ctx context.Context, req *SignUpReq, opts ...http.CallOption) (rsp *SignUpReply, err error)
 }
 
-type GreeterHTTPClientImpl struct {
+type UserHTTPClientImpl struct {
 	cc *http.Client
 }
 
-func NewGreeterHTTPClient(client *http.Client) GreeterHTTPClient {
-	return &GreeterHTTPClientImpl{client}
+func NewUserHTTPClient(client *http.Client) UserHTTPClient {
+	return &UserHTTPClientImpl{client}
 }
 
-func (c *GreeterHTTPClientImpl) LogIn(ctx context.Context, in *LoginReq, opts ...http.CallOption) (*LoginResp, error) {
+func (c *UserHTTPClientImpl) LogIn(ctx context.Context, in *LoginReq, opts ...http.CallOption) (*LoginResp, error) {
 	var out LoginResp
 	pattern := "/login"
 	path := binding.EncodeURL(pattern, in, false)
-	opts = append(opts, http.Operation(OperationGreeterLogIn))
+	opts = append(opts, http.Operation(OperationUserLogIn))
 	opts = append(opts, http.PathTemplate(pattern))
 	err := c.cc.Invoke(ctx, "POST", path, in, &out, opts...)
 	if err != nil {
@@ -97,11 +97,11 @@ func (c *GreeterHTTPClientImpl) LogIn(ctx context.Context, in *LoginReq, opts ..
 	return &out, err
 }
 
-func (c *GreeterHTTPClientImpl) SignUp(ctx context.Context, in *SignUpReq, opts ...http.CallOption) (*SignUpReply, error) {
+func (c *UserHTTPClientImpl) SignUp(ctx context.Context, in *SignUpReq, opts ...http.CallOption) (*SignUpReply, error) {
 	var out SignUpReply
 	pattern := "/signup"
 	path := binding.EncodeURL(pattern, in, false)
-	opts = append(opts, http.Operation(OperationGreeterSignUp))
+	opts = append(opts, http.Operation(OperationUserSignUp))
 	opts = append(opts, http.PathTemplate(pattern))
 	err := c.cc.Invoke(ctx, "POST", path, in, &out, opts...)
 	if err != nil {

@@ -18,7 +18,7 @@ func GenAuthMiddleWare(c *conf.Server) middleware.Middleware {
 			return []byte(c.RandomKey), nil
 		}, jwt.WithSigningMethod(jwtv4.SigningMethodHS256))).
 		Match(func(ctx context.Context, operation string) bool {
-			if (operation == v1.OperationGreeterSignUp) || (operation == v1.OperationGreeterLogIn) {
+			if (operation == v1.OperationUserLogIn) || (operation == v1.OperationUserSignUp) {
 				return false
 			} else {
 				return true

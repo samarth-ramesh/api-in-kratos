@@ -8,7 +8,7 @@ import (
 )
 
 type GreeterService struct {
-	pb.UnimplementedGreeterServer
+	pb.UnimplementedUserServer
 	biz.UserUsecase
 }
 
