@@ -1,0 +1,47 @@
+syntax = "proto3";
+
+package helloworld.v1;
+
+import "google/api/annotations.proto";
+
+option go_package = "accountsapi/api/helloworld/v1;v1";
+option java_multiple_files = true;
+option java_package = "dev.kratos.api.helloworld.v1";
+option java_outer_classname = "HelloworldProtoV1";
+
+// The greeting service definition.
+service Greeter {
+  // Sends a greeting
+  rpc SignUp (SignUpReq) returns (SignUpReply) {
+    option (google.api.http) = {
+      post: "/signup",
+      body: "*"
+    };
+  };
+  rpc LogIn (LoginReq) returns (LoginResp) {
+    option (google.api.http) = {
+      post: "/login",
+      body: "*"
+    };
+  };
+}
+
+// The request message containing the user's name.
+message SignUpReq {
+  string name = 1;
+  string password = 2;
+}
+
+// The response message containing the greetings
+message SignUpReply {
+  string userId = 1;
+}
+
+message LoginReq {
+  string name = 1;
+  string password = 2;
+}
+
+message LoginResp {
+  string authCode =1;
+}
