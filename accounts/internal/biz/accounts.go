@@ -29,7 +29,7 @@ type GreeterRepo interface {
 	Update(context.Context, *Account) (*Account, error)
 	FindByID(context.Context, int64) (*Account, error)
 	ListAll(context.Context, string) ([]*Account, error)
-	FindByName(context.Context, string) ([]*Account, error)
+	FindByName(context.Context, string, string) ([]*Account, error)
 }
 
 // AccountsUseCase is a Greeter usecase.
@@ -54,7 +54,7 @@ func UserIdFromContext(ctx context.Context) string {
 
 // CreateAccount creates a Greeter, and returns the new Greeter.
 func (uc *AccountsUseCase) CreateAccount(ctx context.Context, g *Account) (*Account, error) {
-	rows, err := uc.repo.FindByName(ctx, g.Name)
+	rows, err := uc.repo.FindByName(ctx, g.Name, UserIdFromContext(ctx))
 	if err != nil {
 		return nil, err
 	}
