@@ -19,7 +19,7 @@ func NewAccountsService(uc *biz.AccountsUseCase) *AccountsService {
 }
 
 func (s *AccountsService) CreateAccounts(ctx context.Context, req *pb.CreateAccountsRequest) (*pb.CreateAccountsReply, error) {
-	rv, err := s.uc.CreateGreeter(ctx, &biz.Account{
+	rv, err := s.uc.CreateAccount(ctx, &biz.Account{
 		Name: req.Name,
 	})
 	if err != nil {
@@ -35,10 +35,24 @@ func (s *AccountsService) UpdateAccounts(ctx context.Context, req *pb.UpdateAcco
 func (s *AccountsService) DeleteAccounts(ctx context.Context, req *pb.DeleteAccountsRequest) (*pb.DeleteAccountsReply, error) {
 	return &pb.DeleteAccountsReply{}, nil
 }
+
 func (s *AccountsService) GetAccounts(ctx context.Context, req *pb.GetAccountRequest) (*pb.GetAccountReply, error) {
 	s.GetAccount(ctx, req)
 	return &pb.GetAccountReply{}, nil
 }
+
 func (s *AccountsService) ListAccounts(ctx context.Context, req *pb.ListAccountsRequest) (*pb.ListAccountsReply, error) {
-	return &pb.ListAccountsReply{}, nil
+	rows, err := s.uc.ListAccounts(ctx)
+	if err != nil {
+		return nil, err
+	}
+	rv := new(pb.ListAccountsReply)
+	rv.Accounts = make([]*pb.GetAccountReply, 0)
+	for _, j := range rows {
+		rv.Accounts = append(rv.Accounts, &pb.GetAccountReply{
+			Id:   j.Id,
+			Name: j.Name,
+		})
+	}
+	return rv, nil
 }
