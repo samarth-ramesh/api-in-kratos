@@ -29,12 +29,44 @@ service Accounts {
 	};
 	rpc GetAccount (GetAccountRequest) returns (GetAccountReply){
 		option (google.api.http) = {
-			get: "/account/{id}{",
+			get: "/account/{id}",
 		};
 	};
 	rpc ListAccounts (ListAccountsRequest) returns (ListAccountsReply){
 		option (google.api.http) = {
 			get: "/account",
+		};
+	};
+
+	rpc CreateTransaction (CreateTransactionRequest) returns (CreateTransactionReply) {
+		option (google.api.http) = {
+			post: "/transaction",
+			body: "*"
+		};
+	};
+
+	rpc UpdateTransaction (UpdateTransactionRequest) returns (UpdateTransactionRequest) {
+		option (google.api.http) = {
+			post: "/transaction/{id}",
+			body: "*"
+		};
+	};
+
+	rpc DeleteTransaction (DeleteTransactionRequest) returns (DeleteAccountsReply) {
+		option (google.api.http) = {
+			delete: "/transaction/{id}",
+		};
+	};
+
+	rpc GetTransaction (DeleteAccountsRequest) returns (UpdateAccountsReply){
+		option (google.api.http) = {
+			get: "/account/{id}",
+		};
+	};
+
+	rpc ListTransactions (ListTransactionsRequest) returns (ListTransactionsReply){
+		option (google.api.http) = {
+			get: "/transaction",
 		};
 	};
 }
@@ -71,6 +103,37 @@ message ListAccountsRequest {}
 message ListAccountsReply {
 	repeated GetAccountReply accounts =1;
 };
+
+message CreateTransactionRequest {
+	string account_source = 1;
+	string account_dest = 2;
+	int32 amount = 3;
+	int64 time = 4;
+}
+
+message CreateTransactionReply  {
+	string id = 1;
+}
+
+message UpdateTransactionRequest {
+	string id = 1;
+	string account_source = 2;
+	string account_dest = 3;
+	int32 amount = 4;
+	int64 time = 5;
+}
+
+message DeleteTransactionRequest {
+	string id = 1;
+}
+
+message ListTransactionsRequest {
+	string account_id = 1;
+}
+
+message ListTransactionsReply {
+	repeated UpdateAccountsReply transactions = 1;
+}
 
 enum ErrorReason {
 	// Set default error code.
