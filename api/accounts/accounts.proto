@@ -1,0 +1,70 @@
+syntax = "proto3";
+
+package api.accounts;
+import "google/api/annotations.proto";
+
+option go_package = "accountsapi/api/accounts;accounts";
+option java_multiple_files = true;
+option java_package = "api.accounts";
+
+service Accounts {
+	rpc CreateAccounts (CreateAccountsRequest) returns (CreateAccountsReply) {
+		option (google.api.http) = {
+			post: "/account",
+			body: "*"
+		};
+	};
+	
+	rpc UpdateAccounts (UpdateAccountsRequest) returns (UpdateAccountsReply){
+		option (google.api.http) = {
+			post: "/account/update",
+			body: "*"
+		  };
+	};
+	rpc DeleteAccounts (DeleteAccountsRequest) returns (DeleteAccountsReply){
+		option (google.api.http) = {
+			delete: "/account/{id}{",
+		  };
+	};
+	rpc GetAccount (GetAccountRequest) returns (GetAccountReply){
+		option (google.api.http) = {
+			get: "/account/{id}{",
+		};
+	};
+	rpc ListAccounts (ListAccountsRequest) returns (ListAccountsReply){
+		option (google.api.http) = {
+			get: "/account",
+		};
+	};
+}
+
+message CreateAccountsRequest {
+	string name = 1;
+}
+message CreateAccountsReply {
+	string id = 1;
+}
+
+message UpdateAccountsRequest {
+	string id = 1;
+	string name = 2;
+}
+message UpdateAccountsReply {
+	string id = 1;
+}
+
+message DeleteAccountsRequest {
+	string id = 1;
+}
+message DeleteAccountsReply {}
+
+message GetAccountRequest {
+	string id = 1;
+}
+message GetAccountReply {
+	string id = 1;
+	string name = 2;
+}
+
+message ListAccountsRequest {}
+message ListAccountsReply {}

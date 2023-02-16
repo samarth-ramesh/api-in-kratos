@@ -3,45 +3,36 @@
 
 openapi: 3.0.3
 info:
-    title: User API
-    description: The greeting service definition.
+    title: Accounts API
     version: 0.0.1
 paths:
-    /login:
-        post:
+    /account:
+        get:
             tags:
-                - User
-            operationId: User_LogIn
-            requestBody:
-                content:
-                    application/json:
-                        schema:
-                            $ref: '#/components/schemas/LoginReq'
-                required: true
+                - Accounts
+            operationId: Accounts_ListAccounts
             responses:
                 "200":
                     description: OK
                     content:
                         application/json:
                             schema:
-                                $ref: '#/components/schemas/LoginResp'
+                                $ref: '#/components/schemas/ListAccountsReply'
                 default:
                     description: Default error response
                     content:
                         application/json:
                             schema:
                                 $ref: '#/components/schemas/Status'
-    /signup:
         post:
             tags:
-                - User
-            description: Sends a greeting
-            operationId: User_SignUp
+                - Accounts
+            operationId: Accounts_CreateAccounts
             requestBody:
                 content:
                     application/json:
                         schema:
-                            $ref: '#/components/schemas/SignUpReq'
+                            $ref: '#/components/schemas/CreateAccountsRequest'
                 required: true
             responses:
                 "200":
@@ -49,7 +40,78 @@ paths:
                     content:
                         application/json:
                             schema:
-                                $ref: '#/components/schemas/SignUpReply'
+                                $ref: '#/components/schemas/CreateAccountsReply'
+                default:
+                    description: Default error response
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/Status'
+    /account/update:
+        post:
+            tags:
+                - Accounts
+            operationId: Accounts_UpdateAccounts
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/UpdateAccountsRequest'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/UpdateAccountsReply'
+                default:
+                    description: Default error response
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/Status'
+    /account/{id}{:
+        get:
+            tags:
+                - Accounts
+            operationId: Accounts_GetAccount
+            parameters:
+                - name: id
+                  in: path
+                  required: true
+                  schema:
+                    type: string
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/GetAccountReply'
+                default:
+                    description: Default error response
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/Status'
+        delete:
+            tags:
+                - Accounts
+            operationId: Accounts_DeleteAccounts
+            parameters:
+                - name: id
+                  in: path
+                  required: true
+                  schema:
+                    type: string
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/DeleteAccountsReply'
                 default:
                     description: Default error response
                     content:
@@ -58,6 +120,26 @@ paths:
                                 $ref: '#/components/schemas/Status'
 components:
     schemas:
+        CreateAccountsReply:
+            type: object
+            properties:
+                id:
+                    type: string
+        CreateAccountsRequest:
+            type: object
+            properties:
+                name:
+                    type: string
+        DeleteAccountsReply:
+            type: object
+            properties: {}
+        GetAccountReply:
+            type: object
+            properties:
+                id:
+                    type: string
+                name:
+                    type: string
         GoogleProtobufAny:
             type: object
             properties:
@@ -66,32 +148,9 @@ components:
                     description: The type of the serialized message.
             additionalProperties: true
             description: Contains an arbitrary serialized message along with a @type that describes the type of the serialized message.
-        LoginReq:
+        ListAccountsReply:
             type: object
-            properties:
-                name:
-                    type: string
-                password:
-                    type: string
-        LoginResp:
-            type: object
-            properties:
-                authCode:
-                    type: string
-        SignUpReply:
-            type: object
-            properties:
-                userId:
-                    type: string
-            description: The response message containing the greetings
-        SignUpReq:
-            type: object
-            properties:
-                name:
-                    type: string
-                password:
-                    type: string
-            description: The request message containing the user's name.
+            properties: {}
         Status:
             type: object
             properties:
@@ -108,5 +167,17 @@ components:
                         $ref: '#/components/schemas/GoogleProtobufAny'
                     description: A list of messages that carry the error details.  There is a common set of message types for APIs to use.
             description: 'The `Status` type defines a logical error model that is suitable for different programming environments, including REST APIs and RPC APIs. It is used by [gRPC](https://github.com/grpc). Each `Status` message contains three pieces of data: error code, error message, and error details. You can find out more about this error model and how to work with it in the [API Design Guide](https://cloud.google.com/apis/design/errors).'
+        UpdateAccountsReply:
+            type: object
+            properties:
+                id:
+                    type: string
+        UpdateAccountsRequest:
+            type: object
+            properties:
+                id:
+                    type: string
+                name:
+                    type: string
 tags:
-    - name: User
+    - name: Accounts

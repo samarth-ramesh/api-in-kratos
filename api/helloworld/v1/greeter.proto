@@ -9,9 +9,7 @@ option java_multiple_files = true;
 option java_package = "dev.kratos.api.helloworld.v1";
 option java_outer_classname = "HelloworldProtoV1";
 
-// The greeting service definition.
 service User {
-  // Sends a greeting
   rpc SignUp (SignUpReq) returns (SignUpReply) {
     option (google.api.http) = {
       post: "/signup",
