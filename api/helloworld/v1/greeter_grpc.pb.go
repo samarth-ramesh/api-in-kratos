@@ -2,7 +2,7 @@
 // versions:
 // - protoc-gen-go-grpc v1.2.0
 // - protoc             v3.6.1
-// source: api/helloworld/v1/greeter.proto
+// source: helloworld/v1/greeter.proto
 
 package v1
 
@@ -22,7 +22,6 @@ const _ = grpc.SupportPackageIsVersion7
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type UserClient interface {
-	// Sends a greeting
 	SignUp(ctx context.Context, in *SignUpReq, opts ...grpc.CallOption) (*SignUpReply, error)
 	LogIn(ctx context.Context, in *LoginReq, opts ...grpc.CallOption) (*LoginResp, error)
 }
@@ -57,7 +56,6 @@ func (c *userClient) LogIn(ctx context.Context, in *LoginReq, opts ...grpc.CallO
 // All implementations must embed UnimplementedUserServer
 // for forward compatibility
 type UserServer interface {
-	// Sends a greeting
 	SignUp(context.Context, *SignUpReq) (*SignUpReply, error)
 	LogIn(context.Context, *LoginReq) (*LoginResp, error)
 	mustEmbedUnimplementedUserServer()
@@ -139,5 +137,5 @@ var User_ServiceDesc = grpc.ServiceDesc{
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
-	Metadata: "api/helloworld/v1/greeter.proto",
+	Metadata: "helloworld/v1/greeter.proto",
 }

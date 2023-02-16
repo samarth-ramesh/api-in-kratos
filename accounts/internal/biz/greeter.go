@@ -3,43 +3,52 @@ package biz
 import (
 	"context"
 
-	v1 "accountsapi/api/helloworld/v1"
+	"accountsapi/api/accounts"
 
 	"github.com/go-kratos/kratos/v2/errors"
 	"github.com/go-kratos/kratos/v2/log"
 )
 
 var (
-	// ErrUserNotFound is user not found.
-	ErrUserNotFound = errors.NotFound(v1.ErrorReason_USER_NOT_FOUND.String(), "user not found")
+	// ErrAccountExists is user not found.
+	ErrAccountExists = errors.BadRequest(accounts.ErrorReason_ACCOUNT_EXISTS.String(), "account exists")
 )
 
-// Greeter is a Greeter model.
-type Greeter struct {
-	Hello string
+// Account is a Account model.
+type Account struct {
+	Name string `field:"name"`
+	Id   string `field:"rowid"`
 }
 
 // GreeterRepo is a Greater repo.
 type GreeterRepo interface {
-	Save(context.Context, *Greeter) (*Greeter, error)
-	Update(context.Context, *Greeter) (*Greeter, error)
-	FindByID(context.Context, int64) (*Greeter, error)
-	ListAll(context.Context) ([]*Greeter, error)
+	Save(context.Context, *Account) (*Account, error)
+	Update(context.Context, *Account) (*Account, error)
+	FindByID(context.Context, int64) (*Account, error)
+	ListAll(context.Context) ([]*Account, error)
+	FindByName(context.Context, string) ([]*Account, error)
 }
 
-// GreeterUsecase is a Greeter usecase.
-type GreeterUsecase struct {
+// AccountsUseCase is a Greeter usecase.
+type AccountsUseCase struct {
 	repo GreeterRepo
 	log  *log.Helper
 }
 
-// NewGreeterUsecase new a Greeter usecase.
-func NewGreeterUsecase(repo GreeterRepo, logger log.Logger) *GreeterUsecase {
-	return &GreeterUsecase{repo: repo, log: log.NewHelper(logger)}
+// NewAccountsUseCase new a Greeter usecase.
+func NewAccountsUseCase(repo GreeterRepo, logger log.Logger) *AccountsUseCase {
+	return &AccountsUseCase{repo: repo, log: log.NewHelper(logger)}
 }
 
 // CreateGreeter creates a Greeter, and returns the new Greeter.
-func (uc *GreeterUsecase) CreateGreeter(ctx context.Context, g *Greeter) (*Greeter, error) {
-	uc.log.WithContext(ctx).Infof("CreateGreeter: %v", g.Hello)
+func (uc *AccountsUseCase) CreateGreeter(ctx context.Context, g *Account) (*Account, error) {
+	rows, err := uc.repo.FindByName(ctx, g.Name)
+	if err != nil {
+		return nil, err
+	}
+	if len(rows) > 0 {
+		return nil, ErrAccountExists
+	}
+	uc.log.WithContext(ctx).Infof("CreateGreeter: %v", g.Name)
 	return uc.repo.Save(ctx, g)
 }

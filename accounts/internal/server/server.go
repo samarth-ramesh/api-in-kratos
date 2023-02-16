@@ -26,5 +26,5 @@ func GenAuthMiddleWare(c *conf.Server) middleware.Middleware {
 		}).Build()
 }
 
-// ProviderSet is server providers.
-var ProviderSet = wire.NewSet(NewGRPCServer, NewHTTPServer)
+// ProviderSet1 is server providers.
+var ProviderSet1 = wire.NewSet(NewGRPCServer, NewHTTPServer)

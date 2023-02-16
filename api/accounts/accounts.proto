@@ -2,6 +2,7 @@ syntax = "proto3";
 
 package api.accounts;
 import "google/api/annotations.proto";
+import "errors/errors.proto";
 
 option go_package = "accountsapi/api/accounts;accounts";
 option java_multiple_files = true;
@@ -67,4 +68,16 @@ message GetAccountReply {
 }
 
 message ListAccountsRequest {}
-message ListAccountsReply {}
+message ListAccountsReply {
+	repeated GetAccountReply accounts =1;
+};
+
+enum ErrorReason {
+	// Set default error code.
+	option (errors.default_code) = 500;
+  
+	// Set the error code separately for an enumeration.
+	ACCOUNT_EXISTS = 0 [(errors.code) = 400];
+  
+	ACCOUNT_NOT_EXIST = 1 [(errors.code) = 404];
+  }

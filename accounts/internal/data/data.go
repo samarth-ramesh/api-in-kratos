@@ -6,19 +6,19 @@ import (
 
 	"github.com/go-kratos/kratos/v2/log"
 	"github.com/google/wire"
+	_ "github.com/mattn/go-sqlite3"
 )
 
-// ProviderSet is data providers.
-var ProviderSet = wire.NewSet(NewData, NewAccountsRepo)
+// ProviderSet2 is data providers.
+var ProviderSet2 = wire.NewSet(NewData, NewAccountsRepo)
 
 type Data struct {
 	// TODO wrapped database client
-	Db        *sql.DB
-	JwtSecret string
+	Db *sql.DB
 }
 
 // NewData .
-func NewData(confData *conf.Data, confServer *conf.Server, logger log.Logger) (*Data, func(), error) {
+func NewData(confData *conf.Data, logger log.Logger) (*Data, func(), error) {
 	db, err := sql.Open(confData.Database.Driver, confData.Database.Source)
 	if err != nil {
 		return nil, nil, err
@@ -28,7 +28,6 @@ func NewData(confData *conf.Data, confServer *conf.Server, logger log.Logger) (*
 	}
 
 	return &Data{
-		Db:        db,
-		JwtSecret: confServer.RandomKey,
+		Db: db,
 	}, cleanup, nil
 }
