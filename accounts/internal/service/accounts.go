@@ -31,7 +31,16 @@ func (s *AccountsService) CreateAccounts(ctx context.Context, req *pb.CreateAcco
 	}, nil
 }
 func (s *AccountsService) UpdateAccounts(ctx context.Context, req *pb.UpdateAccountsRequest) (*pb.UpdateAccountsReply, error) {
-	return &pb.UpdateAccountsReply{}, nil
+	rv, err := s.uc.UpdateAccountById(ctx, &biz.Account{
+		Name: req.Name,
+		Id:   req.Id,
+	})
+	if err != nil {
+		return nil, err
+	}
+	return &pb.UpdateAccountsReply{
+		Id: rv.Id,
+	}, nil
 }
 func (s *AccountsService) DeleteAccounts(ctx context.Context, req *pb.DeleteAccountsRequest) (*pb.DeleteAccountsReply, error) {
 	return &pb.DeleteAccountsReply{}, nil
@@ -49,7 +58,7 @@ func (s *AccountsService) GetAccount(ctx context.Context, req *pb.GetAccountRequ
 	}, nil
 }
 
-func (s *AccountsService) ListAccounts(ctx context.Context, req *pb.ListAccountsRequest) (*pb.ListAccountsReply, error) {
+func (s *AccountsService) ListAccounts(ctx context.Context, _ *pb.ListAccountsRequest) (*pb.ListAccountsReply, error) {
 	rows, err := s.uc.ListAccounts(ctx)
 	if err != nil {
 		return nil, err

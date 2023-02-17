@@ -3,6 +3,7 @@ package biz
 import (
 	"context"
 	"encoding/json"
+	"strconv"
 
 	"accountsapi/api/accounts"
 
@@ -14,6 +15,7 @@ import (
 var (
 	// ErrAccountExists is user not found.
 	ErrAccountExists = errors.BadRequest(accounts.ErrorReason_ACCOUNT_EXISTS.String(), "account exists")
+	ErrNotFound      = errors.NotFound("Not Found", "")
 )
 
 // Account is a Account model.
@@ -78,11 +80,30 @@ func (uc *AccountsUseCase) ListAccountById(ctx context.Context, accountId int64)
 	}
 	if account == nil {
 		uc.log.Debug("No Account Found for ID")
-		return nil, errors.NotFound("Not Found", "")
+		return nil, ErrNotFound
 	}
 	if account.UserId != UserIdFromContext(ctx) {
 		uc.log.Debug("Perm denied")
-		return nil, errors.NotFound("Not Found", "")
+		return nil, ErrNotFound
 	}
 	return account, nil
+}
+
+func (uc *AccountsUseCase) UpdateAccountById(ctx context.Context, account *Account) (*Account, error) {
+	accountId, _ := strconv.Atoi(account.Id)
+	acc, err := uc.repo.FindByID(ctx, int64(accountId))
+	if err != nil {
+		return nil, err
+	}
+	if acc == nil {
+		return nil, ErrNotFound
+	}
+	if acc.UserId != UserIdFromContext(ctx) {
+		return nil, ErrNotFound
+	}
+	updated, err := uc.repo.Update(ctx, account)
+	if err != nil {
+		return nil, err
+	}
+	return updated, nil
 }

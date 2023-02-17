@@ -37,6 +37,10 @@ func (r *AccountsRepo) Save(ctx context.Context, g *biz.Account) (*biz.Account, 
 }
 
 func (r *AccountsRepo) Update(ctx context.Context, g *biz.Account) (*biz.Account, error) {
+	_, err := r.data.Db.ExecContext(ctx, "UPDATE account SET name = ? WHERE ROWID = ?", g.Name, g.Id)
+	if err != nil {
+		return nil, err
+	}
 	return g, nil
 }
 
