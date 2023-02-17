@@ -9,20 +9,20 @@ import (
 	"github.com/go-kratos/kratos/v2/log"
 )
 
-type GreeterRepo struct {
+type AccountsRepo struct {
 	data *Data
 	log  *log.Helper
 }
 
 // NewAccountsRepo .
-func NewAccountsRepo(data *Data, logger log.Logger) *GreeterRepo {
-	return &GreeterRepo{
+func NewAccountsRepo(data *Data, logger log.Logger) *AccountsRepo {
+	return &AccountsRepo{
 		data: data,
 		log:  log.NewHelper(logger),
 	}
 }
 
-func (r *GreeterRepo) Save(ctx context.Context, g *biz.Account) (*biz.Account, error) {
+func (r *AccountsRepo) Save(ctx context.Context, g *biz.Account) (*biz.Account, error) {
 	res, err := r.data.Db.ExecContext(ctx, "INSERT INTO account VALUES (?, ?)", g.Name, g.UserId)
 	if err != nil {
 		return nil, err
@@ -35,15 +35,15 @@ func (r *GreeterRepo) Save(ctx context.Context, g *biz.Account) (*biz.Account, e
 	return g, nil
 }
 
-func (r *GreeterRepo) Update(ctx context.Context, g *biz.Account) (*biz.Account, error) {
+func (r *AccountsRepo) Update(ctx context.Context, g *biz.Account) (*biz.Account, error) {
 	return g, nil
 }
 
-func (r *GreeterRepo) FindByID(context.Context, int64) (*biz.Account, error) {
+func (r *AccountsRepo) FindByID(context.Context, int64) (*biz.Account, error) {
 	return nil, nil
 }
 
-func (r *GreeterRepo) ListAll(ctx context.Context, userId string) (res []*biz.Account, err error) {
+func (r *AccountsRepo) ListAll(ctx context.Context, userId string) (res []*biz.Account, err error) {
 	rows, err := r.data.Db.QueryContext(ctx, "SELECT rowid, name FROM account WHERE userId = ?", userId)
 	if err != nil {
 		return nil, err
@@ -59,7 +59,7 @@ func (r *GreeterRepo) ListAll(ctx context.Context, userId string) (res []*biz.Ac
 	return res, nil
 }
 
-func (r *GreeterRepo) FindByName(ctx context.Context, name, userId string) (res []*biz.Account, err error) {
+func (r *AccountsRepo) FindByName(ctx context.Context, name, userId string) (res []*biz.Account, err error) {
 	rows, err := r.data.Db.QueryContext(ctx, "SELECT rowid, name FROM account WHERE name = ? AND userId = ?", name, userId)
 	if err != nil {
 		return nil, err

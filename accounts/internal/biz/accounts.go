@@ -23,8 +23,8 @@ type Account struct {
 	UserId string `field:"userId"`
 }
 
-// GreeterRepo is a Greater repo.
-type GreeterRepo interface {
+// AccountRepo is a Greater repo.
+type AccountRepo interface {
 	Save(context.Context, *Account) (*Account, error)
 	Update(context.Context, *Account) (*Account, error)
 	FindByID(context.Context, int64) (*Account, error)
@@ -34,12 +34,12 @@ type GreeterRepo interface {
 
 // AccountsUseCase is a Greeter usecase.
 type AccountsUseCase struct {
-	repo GreeterRepo
+	repo AccountRepo
 	log  *log.Helper
 }
 
 // NewAccountsUseCase new a Greeter usecase.
-func NewAccountsUseCase(repo GreeterRepo, logger log.Logger) *AccountsUseCase {
+func NewAccountsUseCase(repo AccountRepo, logger log.Logger) *AccountsUseCase {
 	return &AccountsUseCase{repo: repo, log: log.NewHelper(logger)}
 }
 
