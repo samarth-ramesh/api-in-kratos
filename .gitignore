@@ -38,4 +38,5 @@ bin/
 *.swp
 
 #databases
-*/**/db.db
+accounts/cmd/accounts/db.db
+cmd/accountsapi/db.db
