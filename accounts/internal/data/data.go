@@ -1,6 +1,7 @@
 package data
 
 import (
+	"accountsapi/accounts/internal/biz"
 	"accountsapi/accounts/internal/conf"
 	"database/sql"
 
@@ -10,7 +11,7 @@ import (
 )
 
 // ProviderSet2 is data providers.
-var ProviderSet2 = wire.NewSet(NewData, NewAccountsRepo)
+var ProviderSet2 = wire.NewSet(NewData, wire.Bind(new(biz.GreeterRepo), new(*GreeterRepo)), NewAccountsRepo)
 
 type Data struct {
 	// TODO wrapped database client
