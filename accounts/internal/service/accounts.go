@@ -92,7 +92,23 @@ func (s *AccountsService) CreateTransaction(ctx context.Context, req *pb.CreateT
 	}, nil
 }
 func (s *AccountsService) UpdateTransaction(ctx context.Context, req *pb.UpdateTransactionRequest) (*pb.UpdateTransactionRequest, error) {
-	return &pb.UpdateTransactionRequest{}, nil
+	transaction, err := s.transactionUseCase.UpdateTransaction(ctx, &biz.Transaction{
+		Account1:        req.AccountSource,
+		Account2:        req.AccountDest,
+		Amount:          int64(req.Amount),
+		Id:              req.Id,
+		TransactionTime: time.Unix(req.Time, 0),
+	})
+	if err != nil {
+		return nil, err
+	}
+	return &pb.UpdateTransactionRequest{
+		Id:            transaction.Id,
+		AccountDest:   transaction.Account2,
+		AccountSource: transaction.Account1,
+		Time:          transaction.TransactionTime.Unix(),
+		Amount:        int32(transaction.Amount),
+	}, nil
 }
 func (s *AccountsService) DeleteTransaction(ctx context.Context, req *pb.DeleteTransactionRequest) (*pb.DeleteAccountsReply, error) {
 	return &pb.DeleteAccountsReply{}, nil

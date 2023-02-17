@@ -32,3 +32,11 @@ func (repo *TransactionRepo) Save(ctx context.Context, transaction *biz.Transact
 	transaction.Id = fmt.Sprint(newId)
 	return transaction, nil
 }
+
+func (repo *TransactionRepo) Update(ctx context.Context, transaction *biz.Transaction) (*biz.Transaction, error) {
+	_, err := repo.data.Db.ExecContext(ctx, "UPDATE `transaction` SET account1 = ?, account2 = ?, amount = ?, date = ? WHERE ROWID = ?", transaction.Account1, transaction.Account2, transaction.Amount, transaction.TransactionTime.Unix(), transaction.Id)
+	if err != nil {
+		return nil, err
+	}
+	return transaction, nil
+}

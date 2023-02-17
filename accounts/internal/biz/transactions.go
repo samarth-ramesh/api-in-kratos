@@ -9,10 +9,8 @@ import (
 
 type TransactionRepo interface {
 	Save(context.Context, *Transaction) (*Transaction, error)
-	//Update(context.Context, *Account) (*Account, error)
+	Update(context.Context, *Transaction) (*Transaction, error)
 	//FindByID(context.Context, int64) (*Account, error)
-	//ListAll(context.Context, string) ([]*Account, error)
-	//FindByName(context.Context, string, string) ([]*Account, error)
 }
 
 type Transaction struct {
@@ -59,4 +57,25 @@ func (uc *TransactionUseCase) CreateTransaction(ctx context.Context, transaction
 	}
 
 	return save, err
+}
+
+func (uc *TransactionUseCase) UpdateTransaction(ctx context.Context, transaction *Transaction) (*Transaction, error) {
+	newId1, _ := strconv.Atoi(transaction.Account1)
+	acc1, err := uc.accountRepo.FindByID(ctx, int64(newId1))
+	if err != nil {
+		return nil, err
+	}
+	if acc1 == nil || acc1.UserId != UserIdFromContext(ctx) {
+		return nil, ErrNotFound
+	}
+
+	newId2, _ := strconv.Atoi(transaction.Account2)
+	acc2, err := uc.accountRepo.FindByID(ctx, int64(newId2))
+	if err != nil {
+		return nil, err
+	}
+	if acc2 == nil || acc2.UserId != UserIdFromContext(ctx) {
+		return nil, ErrNotFound
+	}
+	return uc.transactionRepo.Update(ctx, transaction)
 }
