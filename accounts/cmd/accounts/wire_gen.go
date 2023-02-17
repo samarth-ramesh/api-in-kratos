@@ -29,9 +29,10 @@ func wireApp(confServer *conf.Server, confData *conf.Data, logger log.Logger) (*
 		return nil, nil, err
 	}
 	accountsRepo := data.NewAccountsRepo(dataData, logger)
+	accountsUseCase := biz.NewAccountsUseCase(accountsRepo, logger)
 	transactionRepo := data.NewTransactionRepo(dataData, logger)
-	accountsUseCase := biz.NewAccountsUseCase(accountsRepo, transactionRepo, logger)
-	accountsService := service.NewAccountsService(accountsUseCase)
+	transactionUseCase := biz.NewTransactionUseCase(transactionRepo, accountsRepo, logger)
+	accountsService := service.NewAccountsService(accountsUseCase, transactionUseCase)
 	grpcServer := server.NewGRPCServer(confServer, accountsService, logger)
 	httpServer := server.NewHTTPServer(confServer, accountsService, logger)
 	app := newApp(logger, grpcServer, httpServer)

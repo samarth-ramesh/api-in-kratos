@@ -34,24 +34,15 @@ type AccountRepo interface {
 	FindByName(context.Context, string, string) ([]*Account, error)
 }
 
-type TransactionRepo interface {
-	//Save(context.Context, *Account) (*Account, error)
-	//Update(context.Context, *Account) (*Account, error)
-	//FindByID(context.Context, int64) (*Account, error)
-	//ListAll(context.Context, string) ([]*Account, error)
-	//FindByName(context.Context, string, string) ([]*Account, error)
-}
-
 // AccountsUseCase is an Accounts usecase.
 type AccountsUseCase struct {
-	accountRepo     AccountRepo
-	transactionRepo TransactionRepo
-	log             *log.Helper
+	accountRepo AccountRepo
+	log         *log.Helper
 }
 
 // NewAccountsUseCase return a new Account usecase.
-func NewAccountsUseCase(accountRepo AccountRepo, transactionRepo TransactionRepo, logger log.Logger) *AccountsUseCase {
-	return &AccountsUseCase{accountRepo: accountRepo, transactionRepo: transactionRepo, log: log.NewHelper(logger)}
+func NewAccountsUseCase(accountRepo AccountRepo, logger log.Logger) *AccountsUseCase {
+	return &AccountsUseCase{accountRepo: accountRepo, log: log.NewHelper(logger)}
 }
 
 func UserIdFromContext(ctx context.Context) string {

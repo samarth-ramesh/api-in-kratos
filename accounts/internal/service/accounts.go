@@ -3,6 +3,7 @@ package service
 import (
 	"context"
 	"strconv"
+	"time"
 
 	"accountsapi/accounts/internal/biz"
 	pb "accountsapi/api/accounts"
@@ -10,17 +11,19 @@ import (
 
 type AccountsService struct {
 	pb.UnimplementedAccountsServer
-	uc *biz.AccountsUseCase
+	accountsUseCase    *biz.AccountsUseCase
+	transactionUseCase *biz.TransactionUseCase
 }
 
-func NewAccountsService(uc *biz.AccountsUseCase) *AccountsService {
+func NewAccountsService(accountsUseCase *biz.AccountsUseCase, transactionUseCase *biz.TransactionUseCase) *AccountsService {
 	return &AccountsService{
-		uc: uc,
+		accountsUseCase:    accountsUseCase,
+		transactionUseCase: transactionUseCase,
 	}
 }
 
 func (s *AccountsService) CreateAccounts(ctx context.Context, req *pb.CreateAccountsRequest) (*pb.CreateAccountsReply, error) {
-	rv, err := s.uc.CreateAccount(ctx, &biz.Account{
+	rv, err := s.accountsUseCase.CreateAccount(ctx, &biz.Account{
 		Name: req.Name,
 	})
 	if err != nil {
@@ -31,7 +34,7 @@ func (s *AccountsService) CreateAccounts(ctx context.Context, req *pb.CreateAcco
 	}, nil
 }
 func (s *AccountsService) UpdateAccounts(ctx context.Context, req *pb.UpdateAccountsRequest) (*pb.UpdateAccountsReply, error) {
-	rv, err := s.uc.UpdateAccountById(ctx, &biz.Account{
+	rv, err := s.accountsUseCase.UpdateAccountById(ctx, &biz.Account{
 		Name: req.Name,
 		Id:   req.Id,
 	})
@@ -48,7 +51,7 @@ func (s *AccountsService) DeleteAccounts(ctx context.Context, req *pb.DeleteAcco
 
 func (s *AccountsService) GetAccount(ctx context.Context, req *pb.GetAccountRequest) (*pb.GetAccountReply, error) {
 	accountId, _ := strconv.Atoi(req.Id)
-	rv, err := s.uc.ListAccountById(ctx, int64(accountId))
+	rv, err := s.accountsUseCase.ListAccountById(ctx, int64(accountId))
 	if err != nil {
 		return nil, err
 	}
@@ -59,7 +62,7 @@ func (s *AccountsService) GetAccount(ctx context.Context, req *pb.GetAccountRequ
 }
 
 func (s *AccountsService) ListAccounts(ctx context.Context, _ *pb.ListAccountsRequest) (*pb.ListAccountsReply, error) {
-	rows, err := s.uc.ListAccounts(ctx)
+	rows, err := s.accountsUseCase.ListAccounts(ctx)
 	if err != nil {
 		return nil, err
 	}
@@ -75,7 +78,18 @@ func (s *AccountsService) ListAccounts(ctx context.Context, _ *pb.ListAccountsRe
 }
 
 func (s *AccountsService) CreateTransaction(ctx context.Context, req *pb.CreateTransactionRequest) (*pb.CreateTransactionReply, error) {
-	return &pb.CreateTransactionReply{}, nil
+	transaction, err := s.transactionUseCase.CreateTransaction(ctx, &biz.Transaction{
+		Account1:        req.AccountSource,
+		Account2:        req.AccountDest,
+		Amount:          int64(req.Amount),
+		TransactionTime: time.Unix(req.Time, 0),
+	})
+	if err != nil {
+		return nil, err
+	}
+	return &pb.CreateTransactionReply{
+		Id: transaction.Id,
+	}, nil
 }
 func (s *AccountsService) UpdateTransaction(ctx context.Context, req *pb.UpdateTransactionRequest) (*pb.UpdateTransactionRequest, error) {
 	return &pb.UpdateTransactionRequest{}, nil
