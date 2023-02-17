@@ -70,3 +70,19 @@ func (uc *AccountsUseCase) ListAccounts(ctx context.Context) ([]*Account, error)
 	rv, err := uc.repo.ListAll(ctx, UserIdFromContext(ctx))
 	return rv, err
 }
+
+func (uc *AccountsUseCase) ListAccountById(ctx context.Context, accountId int64) (*Account, error) {
+	account, err := uc.repo.FindByID(ctx, accountId)
+	if err != nil {
+		return nil, err
+	}
+	if account == nil {
+		uc.log.Debug("No Account Found for ID")
+		return nil, errors.NotFound("Not Found", "")
+	}
+	if account.UserId != UserIdFromContext(ctx) {
+		uc.log.Debug("Perm denied")
+		return nil, errors.NotFound("Not Found", "")
+	}
+	return account, nil
+}

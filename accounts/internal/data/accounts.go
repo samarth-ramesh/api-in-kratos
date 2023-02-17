@@ -2,6 +2,7 @@ package data
 
 import (
 	"context"
+	"database/sql"
 	"fmt"
 
 	"accountsapi/accounts/internal/biz"
@@ -39,8 +40,17 @@ func (r *AccountsRepo) Update(ctx context.Context, g *biz.Account) (*biz.Account
 	return g, nil
 }
 
-func (r *AccountsRepo) FindByID(context.Context, int64) (*biz.Account, error) {
-	return nil, nil
+func (r *AccountsRepo) FindByID(ctx context.Context, id int64) (*biz.Account, error) {
+	row := r.data.Db.QueryRowContext(ctx, "SELECT rowid, name, userId FROM account WHERE ROWID = ?", id)
+	rv := new(biz.Account)
+	err := row.Scan(&rv.Id, &rv.Name, &rv.UserId)
+	if err == sql.ErrNoRows {
+		return nil, nil
+	}
+	if err != nil {
+		return nil, err
+	}
+	return rv, nil
 }
 
 func (r *AccountsRepo) ListAll(ctx context.Context, userId string) (res []*biz.Account, err error) {

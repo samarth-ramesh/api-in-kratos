@@ -2,6 +2,7 @@ package service
 
 import (
 	"context"
+	"strconv"
 
 	"accountsapi/accounts/internal/biz"
 	pb "accountsapi/api/accounts"
@@ -36,9 +37,16 @@ func (s *AccountsService) DeleteAccounts(ctx context.Context, req *pb.DeleteAcco
 	return &pb.DeleteAccountsReply{}, nil
 }
 
-func (s *AccountsService) GetAccounts(ctx context.Context, req *pb.GetAccountRequest) (*pb.GetAccountReply, error) {
-	s.GetAccount(ctx, req)
-	return &pb.GetAccountReply{}, nil
+func (s *AccountsService) GetAccount(ctx context.Context, req *pb.GetAccountRequest) (*pb.GetAccountReply, error) {
+	accountId, _ := strconv.Atoi(req.Id)
+	rv, err := s.uc.ListAccountById(ctx, int64(accountId))
+	if err != nil {
+		return nil, err
+	}
+	return &pb.GetAccountReply{
+		Id:   rv.Id,
+		Name: rv.Name,
+	}, nil
 }
 
 func (s *AccountsService) ListAccounts(ctx context.Context, req *pb.ListAccountsRequest) (*pb.ListAccountsReply, error) {
