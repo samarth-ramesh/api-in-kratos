@@ -18,14 +18,14 @@ var (
 	ErrNotFound      = errors.NotFound("Not Found", "")
 )
 
-// Account is a Account model.
+// Account is an Account model.
 type Account struct {
 	Name   string `field:"name"`
 	Id     string `field:"rowid"`
 	UserId string `field:"userId"`
 }
 
-// AccountRepo is a Greater repo.
+// AccountRepo is an Accounts  accountRepo.
 type AccountRepo interface {
 	Save(context.Context, *Account) (*Account, error)
 	Update(context.Context, *Account) (*Account, error)
@@ -34,15 +34,24 @@ type AccountRepo interface {
 	FindByName(context.Context, string, string) ([]*Account, error)
 }
 
-// AccountsUseCase is a Greeter usecase.
-type AccountsUseCase struct {
-	repo AccountRepo
-	log  *log.Helper
+type TransactionRepo interface {
+	//Save(context.Context, *Account) (*Account, error)
+	//Update(context.Context, *Account) (*Account, error)
+	//FindByID(context.Context, int64) (*Account, error)
+	//ListAll(context.Context, string) ([]*Account, error)
+	//FindByName(context.Context, string, string) ([]*Account, error)
 }
 
-// NewAccountsUseCase new a Greeter usecase.
-func NewAccountsUseCase(repo AccountRepo, logger log.Logger) *AccountsUseCase {
-	return &AccountsUseCase{repo: repo, log: log.NewHelper(logger)}
+// AccountsUseCase is an Accounts usecase.
+type AccountsUseCase struct {
+	accountRepo     AccountRepo
+	transactionRepo TransactionRepo
+	log             *log.Helper
+}
+
+// NewAccountsUseCase return a new Account usecase.
+func NewAccountsUseCase(accountRepo AccountRepo, transactionRepo TransactionRepo, logger log.Logger) *AccountsUseCase {
+	return &AccountsUseCase{accountRepo: accountRepo, transactionRepo: transactionRepo, log: log.NewHelper(logger)}
 }
 
 func UserIdFromContext(ctx context.Context) string {
@@ -56,7 +65,7 @@ func UserIdFromContext(ctx context.Context) string {
 
 // CreateAccount creates a Greeter, and returns the new Greeter.
 func (uc *AccountsUseCase) CreateAccount(ctx context.Context, g *Account) (*Account, error) {
-	rows, err := uc.repo.FindByName(ctx, g.Name, UserIdFromContext(ctx))
+	rows, err := uc.accountRepo.FindByName(ctx, g.Name, UserIdFromContext(ctx))
 	if err != nil {
 		return nil, err
 	}
@@ -65,16 +74,16 @@ func (uc *AccountsUseCase) CreateAccount(ctx context.Context, g *Account) (*Acco
 	}
 	uc.log.WithContext(ctx).Infof("CreateGreeter: %v", g.Name)
 	g.UserId = UserIdFromContext(ctx)
-	return uc.repo.Save(ctx, g)
+	return uc.accountRepo.Save(ctx, g)
 }
 
 func (uc *AccountsUseCase) ListAccounts(ctx context.Context) ([]*Account, error) {
-	rv, err := uc.repo.ListAll(ctx, UserIdFromContext(ctx))
+	rv, err := uc.accountRepo.ListAll(ctx, UserIdFromContext(ctx))
 	return rv, err
 }
 
 func (uc *AccountsUseCase) ListAccountById(ctx context.Context, accountId int64) (*Account, error) {
-	account, err := uc.repo.FindByID(ctx, accountId)
+	account, err := uc.accountRepo.FindByID(ctx, accountId)
 	if err != nil {
 		return nil, err
 	}
@@ -91,7 +100,7 @@ func (uc *AccountsUseCase) ListAccountById(ctx context.Context, accountId int64)
 
 func (uc *AccountsUseCase) UpdateAccountById(ctx context.Context, account *Account) (*Account, error) {
 	accountId, _ := strconv.Atoi(account.Id)
-	acc, err := uc.repo.FindByID(ctx, int64(accountId))
+	acc, err := uc.accountRepo.FindByID(ctx, int64(accountId))
 	if err != nil {
 		return nil, err
 	}
@@ -101,7 +110,7 @@ func (uc *AccountsUseCase) UpdateAccountById(ctx context.Context, account *Accou
 	if acc.UserId != UserIdFromContext(ctx) {
 		return nil, ErrNotFound
 	}
-	updated, err := uc.repo.Update(ctx, account)
+	updated, err := uc.accountRepo.Update(ctx, account)
 	if err != nil {
 		return nil, err
 	}

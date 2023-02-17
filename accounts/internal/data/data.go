@@ -11,7 +11,7 @@ import (
 )
 
 // ProviderSet2 is data providers.
-var ProviderSet2 = wire.NewSet(NewData, wire.Bind(new(biz.AccountRepo), new(*AccountsRepo)), NewAccountsRepo)
+var ProviderSet2 = wire.NewSet(NewData, wire.Bind(new(biz.AccountRepo), new(*AccountsRepo)), NewAccountsRepo, NewTransactionRepo, wire.Bind(new(biz.TransactionRepo), new(*TransactionRepo)))
 
 type Data struct {
 	// TODO wrapped database client

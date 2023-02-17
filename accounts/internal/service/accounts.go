@@ -73,3 +73,19 @@ func (s *AccountsService) ListAccounts(ctx context.Context, _ *pb.ListAccountsRe
 	}
 	return rv, nil
 }
+
+func (s *AccountsService) CreateTransaction(ctx context.Context, req *pb.CreateTransactionRequest) (*pb.CreateTransactionReply, error) {
+	return &pb.CreateTransactionReply{}, nil
+}
+func (s *AccountsService) UpdateTransaction(ctx context.Context, req *pb.UpdateTransactionRequest) (*pb.UpdateTransactionRequest, error) {
+	return &pb.UpdateTransactionRequest{}, nil
+}
+func (s *AccountsService) DeleteTransaction(ctx context.Context, req *pb.DeleteTransactionRequest) (*pb.DeleteAccountsReply, error) {
+	return &pb.DeleteAccountsReply{}, nil
+}
+func (s *AccountsService) GetTransaction(ctx context.Context, req *pb.DeleteAccountsRequest) (*pb.UpdateAccountsReply, error) {
+	return &pb.UpdateAccountsReply{}, nil
+}
+func (s *AccountsService) ListTransactions(ctx context.Context, req *pb.ListTransactionsRequest) (*pb.ListTransactionsReply, error) {
+	return &pb.ListTransactionsReply{}, nil
+}

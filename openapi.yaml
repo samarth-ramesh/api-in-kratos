@@ -3,7 +3,7 @@
 
 openapi: 3.0.3
 info:
-    title: ""
+    title: Accounts API
     version: 0.0.1
 paths:
     /account:
@@ -17,7 +17,13 @@ paths:
                     content:
                         application/json:
                             schema:
-                                $ref: '#/components/schemas/api.accounts.ListAccountsReply'
+                                $ref: '#/components/schemas/ListAccountsReply'
+                default:
+                    description: Default error response
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/Status'
         post:
             tags:
                 - Accounts
@@ -26,7 +32,7 @@ paths:
                 content:
                     application/json:
                         schema:
-                            $ref: '#/components/schemas/api.accounts.CreateAccountsRequest'
+                            $ref: '#/components/schemas/CreateAccountsRequest'
                 required: true
             responses:
                 "200":
@@ -34,7 +40,13 @@ paths:
                     content:
                         application/json:
                             schema:
-                                $ref: '#/components/schemas/api.accounts.CreateAccountsReply'
+                                $ref: '#/components/schemas/CreateAccountsReply'
+                default:
+                    description: Default error response
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/Status'
     /account/update:
         post:
             tags:
@@ -44,7 +56,7 @@ paths:
                 content:
                     application/json:
                         schema:
-                            $ref: '#/components/schemas/api.accounts.UpdateAccountsRequest'
+                            $ref: '#/components/schemas/UpdateAccountsRequest'
                 required: true
             responses:
                 "200":
@@ -52,12 +64,18 @@ paths:
                     content:
                         application/json:
                             schema:
-                                $ref: '#/components/schemas/api.accounts.UpdateAccountsReply'
-    /account/{id}{:
+                                $ref: '#/components/schemas/UpdateAccountsReply'
+                default:
+                    description: Default error response
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/Status'
+    /account/{id}:
         get:
             tags:
                 - Accounts
-            operationId: Accounts_GetAccount
+            operationId: Accounts_GetTransaction
             parameters:
                 - name: id
                   in: path
@@ -70,7 +88,14 @@ paths:
                     content:
                         application/json:
                             schema:
-                                $ref: '#/components/schemas/api.accounts.GetAccountReply'
+                                $ref: '#/components/schemas/UpdateAccountsReply'
+                default:
+                    description: Default error response
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/Status'
+    /account/{id}{:
         delete:
             tags:
                 - Accounts
@@ -87,17 +112,45 @@ paths:
                     content:
                         application/json:
                             schema:
-                                $ref: '#/components/schemas/api.accounts.DeleteAccountsReply'
-    /login:
+                                $ref: '#/components/schemas/DeleteAccountsReply'
+                default:
+                    description: Default error response
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/Status'
+    /transaction:
+        get:
+            tags:
+                - Accounts
+            operationId: Accounts_ListTransactions
+            parameters:
+                - name: accountId
+                  in: query
+                  schema:
+                    type: string
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/ListTransactionsReply'
+                default:
+                    description: Default error response
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/Status'
         post:
             tags:
-                - User
-            operationId: User_LogIn
+                - Accounts
+            operationId: Accounts_CreateTransaction
             requestBody:
                 content:
                     application/json:
                         schema:
-                            $ref: '#/components/schemas/helloworld.v1.LoginReq'
+                            $ref: '#/components/schemas/CreateTransactionRequest'
                 required: true
             responses:
                 "200":
@@ -105,17 +158,29 @@ paths:
                     content:
                         application/json:
                             schema:
-                                $ref: '#/components/schemas/helloworld.v1.LoginResp'
-    /signup:
+                                $ref: '#/components/schemas/CreateTransactionReply'
+                default:
+                    description: Default error response
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/Status'
+    /transaction/{id}:
         post:
             tags:
-                - User
-            operationId: User_SignUp
+                - Accounts
+            operationId: Accounts_UpdateTransaction
+            parameters:
+                - name: id
+                  in: path
+                  required: true
+                  schema:
+                    type: string
             requestBody:
                 content:
                     application/json:
                         schema:
-                            $ref: '#/components/schemas/helloworld.v1.SignUpReq'
+                            $ref: '#/components/schemas/UpdateTransactionRequest'
                 required: true
             responses:
                 "200":
@@ -123,72 +188,140 @@ paths:
                     content:
                         application/json:
                             schema:
-                                $ref: '#/components/schemas/helloworld.v1.SignUpReply'
+                                $ref: '#/components/schemas/UpdateTransactionRequest'
+                default:
+                    description: Default error response
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/Status'
+        delete:
+            tags:
+                - Accounts
+            operationId: Accounts_DeleteTransaction
+            parameters:
+                - name: id
+                  in: path
+                  required: true
+                  schema:
+                    type: string
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/DeleteAccountsReply'
+                default:
+                    description: Default error response
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/Status'
 components:
     schemas:
-        api.accounts.CreateAccountsReply:
+        CreateAccountsReply:
             type: object
             properties:
                 id:
                     type: string
-        api.accounts.CreateAccountsRequest:
+        CreateAccountsRequest:
             type: object
             properties:
                 name:
                     type: string
-        api.accounts.DeleteAccountsReply:
+        CreateTransactionReply:
+            type: object
+            properties:
+                id:
+                    type: string
+        CreateTransactionRequest:
+            type: object
+            properties:
+                accountSource:
+                    type: string
+                accountDest:
+                    type: string
+                amount:
+                    type: integer
+                    format: int32
+                time:
+                    type: integer
+                    format: int64
+        DeleteAccountsReply:
             type: object
             properties: {}
-        api.accounts.GetAccountReply:
+        GetAccountReply:
             type: object
             properties:
                 id:
                     type: string
                 name:
                     type: string
-        api.accounts.ListAccountsReply:
+        GoogleProtobufAny:
+            type: object
+            properties:
+                '@type':
+                    type: string
+                    description: The type of the serialized message.
+            additionalProperties: true
+            description: Contains an arbitrary serialized message along with a @type that describes the type of the serialized message.
+        ListAccountsReply:
             type: object
             properties:
                 accounts:
                     type: array
                     items:
-                        $ref: '#/components/schemas/api.accounts.GetAccountReply'
-        api.accounts.UpdateAccountsReply:
+                        $ref: '#/components/schemas/GetAccountReply'
+        ListTransactionsReply:
+            type: object
+            properties:
+                transactions:
+                    type: array
+                    items:
+                        $ref: '#/components/schemas/UpdateAccountsReply'
+        Status:
+            type: object
+            properties:
+                code:
+                    type: integer
+                    description: The status code, which should be an enum value of [google.rpc.Code][google.rpc.Code].
+                    format: int32
+                message:
+                    type: string
+                    description: A developer-facing error message, which should be in English. Any user-facing error message should be localized and sent in the [google.rpc.Status.details][google.rpc.Status.details] field, or localized by the client.
+                details:
+                    type: array
+                    items:
+                        $ref: '#/components/schemas/GoogleProtobufAny'
+                    description: A list of messages that carry the error details.  There is a common set of message types for APIs to use.
+            description: 'The `Status` type defines a logical error model that is suitable for different programming environments, including REST APIs and RPC APIs. It is used by [gRPC](https://github.com/grpc). Each `Status` message contains three pieces of data: error code, error message, and error details. You can find out more about this error model and how to work with it in the [API Design Guide](https://cloud.google.com/apis/design/errors).'
+        UpdateAccountsReply:
             type: object
             properties:
                 id:
                     type: string
-        api.accounts.UpdateAccountsRequest:
+        UpdateAccountsRequest:
             type: object
             properties:
                 id:
                     type: string
                 name:
                     type: string
-        helloworld.v1.LoginReq:
+        UpdateTransactionRequest:
             type: object
             properties:
-                name:
+                id:
                     type: string
-                password:
+                accountSource:
                     type: string
-        helloworld.v1.LoginResp:
-            type: object
-            properties:
-                authCode:
+                accountDest:
                     type: string
-        helloworld.v1.SignUpReply:
-            type: object
-            properties:
-                userId:
-                    type: string
-        helloworld.v1.SignUpReq:
-            type: object
-            properties:
-                name:
-                    type: string
-                password:
-                    type: string
+                amount:
+                    type: integer
+                    format: int32
+                time:
+                    type: integer
+                    format: int64
 tags:
     - name: Accounts
-    - name: User

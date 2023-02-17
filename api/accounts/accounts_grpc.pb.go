@@ -2,7 +2,7 @@
 // versions:
 // - protoc-gen-go-grpc v1.2.0
 // - protoc             v3.6.1
-// source: accounts/accounts.proto
+// source: api/accounts/accounts.proto
 
 package accounts
 
@@ -27,6 +27,11 @@ type AccountsClient interface {
 	DeleteAccounts(ctx context.Context, in *DeleteAccountsRequest, opts ...grpc.CallOption) (*DeleteAccountsReply, error)
 	GetAccount(ctx context.Context, in *GetAccountRequest, opts ...grpc.CallOption) (*GetAccountReply, error)
 	ListAccounts(ctx context.Context, in *ListAccountsRequest, opts ...grpc.CallOption) (*ListAccountsReply, error)
+	CreateTransaction(ctx context.Context, in *CreateTransactionRequest, opts ...grpc.CallOption) (*CreateTransactionReply, error)
+	UpdateTransaction(ctx context.Context, in *UpdateTransactionRequest, opts ...grpc.CallOption) (*UpdateTransactionRequest, error)
+	DeleteTransaction(ctx context.Context, in *DeleteTransactionRequest, opts ...grpc.CallOption) (*DeleteAccountsReply, error)
+	GetTransaction(ctx context.Context, in *DeleteAccountsRequest, opts ...grpc.CallOption) (*UpdateAccountsReply, error)
+	ListTransactions(ctx context.Context, in *ListTransactionsRequest, opts ...grpc.CallOption) (*ListTransactionsReply, error)
 }
 
 type accountsClient struct {
@@ -82,6 +87,51 @@ func (c *accountsClient) ListAccounts(ctx context.Context, in *ListAccountsReque
 	return out, nil
 }
 
+func (c *accountsClient) CreateTransaction(ctx context.Context, in *CreateTransactionRequest, opts ...grpc.CallOption) (*CreateTransactionReply, error) {
+	out := new(CreateTransactionReply)
+	err := c.cc.Invoke(ctx, "/api.accounts.Accounts/CreateTransaction", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *accountsClient) UpdateTransaction(ctx context.Context, in *UpdateTransactionRequest, opts ...grpc.CallOption) (*UpdateTransactionRequest, error) {
+	out := new(UpdateTransactionRequest)
+	err := c.cc.Invoke(ctx, "/api.accounts.Accounts/UpdateTransaction", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *accountsClient) DeleteTransaction(ctx context.Context, in *DeleteTransactionRequest, opts ...grpc.CallOption) (*DeleteAccountsReply, error) {
+	out := new(DeleteAccountsReply)
+	err := c.cc.Invoke(ctx, "/api.accounts.Accounts/DeleteTransaction", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *accountsClient) GetTransaction(ctx context.Context, in *DeleteAccountsRequest, opts ...grpc.CallOption) (*UpdateAccountsReply, error) {
+	out := new(UpdateAccountsReply)
+	err := c.cc.Invoke(ctx, "/api.accounts.Accounts/GetTransaction", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *accountsClient) ListTransactions(ctx context.Context, in *ListTransactionsRequest, opts ...grpc.CallOption) (*ListTransactionsReply, error) {
+	out := new(ListTransactionsReply)
+	err := c.cc.Invoke(ctx, "/api.accounts.Accounts/ListTransactions", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // AccountsServer is the server API for Accounts service.
 // All implementations must embed UnimplementedAccountsServer
 // for forward compatibility
@@ -91,6 +141,11 @@ type AccountsServer interface {
 	DeleteAccounts(context.Context, *DeleteAccountsRequest) (*DeleteAccountsReply, error)
 	GetAccount(context.Context, *GetAccountRequest) (*GetAccountReply, error)
 	ListAccounts(context.Context, *ListAccountsRequest) (*ListAccountsReply, error)
+	CreateTransaction(context.Context, *CreateTransactionRequest) (*CreateTransactionReply, error)
+	UpdateTransaction(context.Context, *UpdateTransactionRequest) (*UpdateTransactionRequest, error)
+	DeleteTransaction(context.Context, *DeleteTransactionRequest) (*DeleteAccountsReply, error)
+	GetTransaction(context.Context, *DeleteAccountsRequest) (*UpdateAccountsReply, error)
+	ListTransactions(context.Context, *ListTransactionsRequest) (*ListTransactionsReply, error)
 	mustEmbedUnimplementedAccountsServer()
 }
 
@@ -112,6 +167,21 @@ func (UnimplementedAccountsServer) GetAccount(context.Context, *GetAccountReques
 }
 func (UnimplementedAccountsServer) ListAccounts(context.Context, *ListAccountsRequest) (*ListAccountsReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ListAccounts not implemented")
+}
+func (UnimplementedAccountsServer) CreateTransaction(context.Context, *CreateTransactionRequest) (*CreateTransactionReply, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method CreateTransaction not implemented")
+}
+func (UnimplementedAccountsServer) UpdateTransaction(context.Context, *UpdateTransactionRequest) (*UpdateTransactionRequest, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method UpdateTransaction not implemented")
+}
+func (UnimplementedAccountsServer) DeleteTransaction(context.Context, *DeleteTransactionRequest) (*DeleteAccountsReply, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method DeleteTransaction not implemented")
+}
+func (UnimplementedAccountsServer) GetTransaction(context.Context, *DeleteAccountsRequest) (*UpdateAccountsReply, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetTransaction not implemented")
+}
+func (UnimplementedAccountsServer) ListTransactions(context.Context, *ListTransactionsRequest) (*ListTransactionsReply, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ListTransactions not implemented")
 }
 func (UnimplementedAccountsServer) mustEmbedUnimplementedAccountsServer() {}
 
@@ -216,6 +286,96 @@ func _Accounts_ListAccounts_Handler(srv interface{}, ctx context.Context, dec fu
 	return interceptor(ctx, in, info, handler)
 }
 
+func _Accounts_CreateTransaction_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CreateTransactionRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AccountsServer).CreateTransaction(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/api.accounts.Accounts/CreateTransaction",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AccountsServer).CreateTransaction(ctx, req.(*CreateTransactionRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Accounts_UpdateTransaction_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(UpdateTransactionRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AccountsServer).UpdateTransaction(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/api.accounts.Accounts/UpdateTransaction",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AccountsServer).UpdateTransaction(ctx, req.(*UpdateTransactionRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Accounts_DeleteTransaction_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(DeleteTransactionRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AccountsServer).DeleteTransaction(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/api.accounts.Accounts/DeleteTransaction",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AccountsServer).DeleteTransaction(ctx, req.(*DeleteTransactionRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Accounts_GetTransaction_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(DeleteAccountsRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AccountsServer).GetTransaction(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/api.accounts.Accounts/GetTransaction",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AccountsServer).GetTransaction(ctx, req.(*DeleteAccountsRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Accounts_ListTransactions_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ListTransactionsRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AccountsServer).ListTransactions(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/api.accounts.Accounts/ListTransactions",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AccountsServer).ListTransactions(ctx, req.(*ListTransactionsRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // Accounts_ServiceDesc is the grpc.ServiceDesc for Accounts service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -243,7 +403,27 @@ var Accounts_ServiceDesc = grpc.ServiceDesc{
 			MethodName: "ListAccounts",
 			Handler:    _Accounts_ListAccounts_Handler,
 		},
+		{
+			MethodName: "CreateTransaction",
+			Handler:    _Accounts_CreateTransaction_Handler,
+		},
+		{
+			MethodName: "UpdateTransaction",
+			Handler:    _Accounts_UpdateTransaction_Handler,
+		},
+		{
+			MethodName: "DeleteTransaction",
+			Handler:    _Accounts_DeleteTransaction_Handler,
+		},
+		{
+			MethodName: "GetTransaction",
+			Handler:    _Accounts_GetTransaction_Handler,
+		},
+		{
+			MethodName: "ListTransactions",
+			Handler:    _Accounts_ListTransactions_Handler,
+		},
 	},
 	Streams:  []grpc.StreamDesc{},
-	Metadata: "accounts/accounts.proto",
+	Metadata: "api/accounts/accounts.proto",
 }
