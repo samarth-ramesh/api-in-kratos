@@ -3,8 +3,10 @@ package data
 import (
 	"accountsapi/accounts/internal/biz"
 	"context"
+	"database/sql"
 	"fmt"
 	"github.com/go-kratos/kratos/v2/log"
+	"time"
 )
 
 type TransactionRepo struct {
@@ -38,5 +40,28 @@ func (repo *TransactionRepo) Update(ctx context.Context, transaction *biz.Transa
 	if err != nil {
 		return nil, err
 	}
+	return transaction, nil
+}
+
+func (repo *TransactionRepo) Delete(ctx context.Context, transaction *biz.Transaction) error {
+	_, err := repo.data.Db.ExecContext(ctx, "DELETE FROM `transaction` WHERE ROWID = ?", transaction.Id)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func (repo *TransactionRepo) FindByID(ctx context.Context, transactionId int64) (*biz.Transaction, error) {
+	row := repo.data.Db.QueryRowContext(ctx, "SELECT ROWID, account1, account2, amount, date FROM `transaction` WHERE ROWID = ?", transactionId)
+	transaction := new(biz.Transaction)
+	transactionTime := 0
+	err := row.Scan(&transaction.Id, &transaction.Account1, &transaction.Account2, &transaction.Amount, &transactionTime)
+	if err == sql.ErrNoRows {
+		return nil, nil
+	}
+	if err != nil {
+		return nil, err
+	}
+	transaction.TransactionTime = time.Unix(int64(transactionTime), 0)
 	return transaction, nil
 }

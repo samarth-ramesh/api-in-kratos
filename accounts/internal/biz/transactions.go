@@ -10,7 +10,8 @@ import (
 type TransactionRepo interface {
 	Save(context.Context, *Transaction) (*Transaction, error)
 	Update(context.Context, *Transaction) (*Transaction, error)
-	//FindByID(context.Context, int64) (*Account, error)
+	Delete(ctx context.Context, transaction *Transaction) error
+	FindByID(context.Context, int64) (*Transaction, error)
 }
 
 type Transaction struct {
@@ -78,4 +79,37 @@ func (uc *TransactionUseCase) UpdateTransaction(ctx context.Context, transaction
 		return nil, ErrNotFound
 	}
 	return uc.transactionRepo.Update(ctx, transaction)
+}
+
+func (uc *TransactionUseCase) DeleteTransaction(ctx context.Context, _transactionId string) error {
+	transactionId, _ := strconv.Atoi(_transactionId)
+	transaction, err := uc.transactionRepo.FindByID(ctx, int64(transactionId))
+	if err != nil {
+		return err
+	}
+	if transaction == nil {
+		return ErrNotFound
+	}
+	newId1, _ := strconv.Atoi(transaction.Account1)
+	acc1, err := uc.accountRepo.FindByID(ctx, int64(newId1))
+	if err != nil {
+		return err
+	}
+	if acc1 == nil || acc1.UserId != UserIdFromContext(ctx) {
+		return ErrNotFound
+	}
+
+	newId2, _ := strconv.Atoi(transaction.Account2)
+	acc2, err := uc.accountRepo.FindByID(ctx, int64(newId2))
+	if err != nil {
+		return err
+	}
+	if acc2 == nil || acc2.UserId != UserIdFromContext(ctx) {
+		return ErrNotFound
+	}
+	err = uc.transactionRepo.Delete(ctx, transaction)
+	if err != nil {
+		return err
+	}
+	return nil
 }

@@ -111,6 +111,10 @@ func (s *AccountsService) UpdateTransaction(ctx context.Context, req *pb.UpdateT
 	}, nil
 }
 func (s *AccountsService) DeleteTransaction(ctx context.Context, req *pb.DeleteTransactionRequest) (*pb.DeleteAccountsReply, error) {
+	err := s.transactionUseCase.DeleteTransaction(ctx, req.Id)
+	if err != nil {
+		return nil, err
+	}
 	return &pb.DeleteAccountsReply{}, nil
 }
 func (s *AccountsService) GetTransaction(ctx context.Context, req *pb.DeleteAccountsRequest) (*pb.UpdateAccountsReply, error) {
